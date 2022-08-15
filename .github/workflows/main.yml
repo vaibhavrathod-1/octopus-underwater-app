@@ -39,6 +39,8 @@ jobs:
 
       run: |
         # Build a docker container and push it to ECR 
+        echo "ECR Login"
+        aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z2g8g3c5
         docker build -t vaibhav .
         echo "Tagging image"
         docker tag vaibhav:latest public.ecr.aws/z2g8g3c5/vaibhav:latest
