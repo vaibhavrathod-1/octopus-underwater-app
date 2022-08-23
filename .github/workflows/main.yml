@@ -48,6 +48,12 @@ jobs:
         docker push public.ecr.aws/z2g8g3c5/vaibhav:latest
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
     
+       
     - name: Deploy image to EKS
-      run: |
-        helm install octo-app octo-app
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}      
+        aws-region: us-east-2
+        run: |
+          helm install octo-app octo-app
