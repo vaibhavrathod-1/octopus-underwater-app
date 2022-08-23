@@ -57,5 +57,5 @@ jobs:
     - name: Deploy into EKS  
       id: deploy-image
       run: |
-        aws eks --region us-east-2 update-kubeconfig --name task-cluster
-        helm upgrade octo-app octo-app
+        aws eks --region $aws-region update-kubeconfig --name task-cluster
+        helm install octo-app octo-app
