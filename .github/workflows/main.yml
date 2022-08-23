@@ -60,4 +60,4 @@ jobs:
       id: deploy-image
       run: |
         aws eks --region us-east-2 update-kubeconfig --name task-cluster
-        helm install octo-app octo-app
+        helm install octo-app octo-app/ --values octo-app/values.yaml
