@@ -41,9 +41,9 @@ jobs:
         # Build a docker container and push it to ECR 
         echo "ECR Login"
         aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z2g8g3c5
-        docker build -t public.ecr.aws/z2g8g3c5/vaibhav:$IMAGE_TAG .
+        docker build -t public.ecr.aws/z2g8g3c5/$ECR_REPOSITORY:$IMAGE_TAG .
         echo "Pushing image to ECR..."
-        docker push public.ecr.aws/z2g8g3c5/vaibhav:$IMAGE_TAG
+        docker push public.ecr.aws/z2g8g3c5/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
     
        
