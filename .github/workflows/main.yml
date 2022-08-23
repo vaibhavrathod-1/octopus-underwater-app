@@ -41,9 +41,12 @@ jobs:
         # Build a docker container and push it to ECR 
         echo "ECR Login"
         aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z2g8g3c5
-        docker build -t vaibhav .
-        echo "Tagging image"
-        docker tag vaibhav:latest public.ecr.aws/z2g8g3c5/vaibhav:latest
+        docker build -t vaibhav -t latest .
+        
         echo "Pushing image to ECR..."
-        docker push public.ecr.aws/z2g8g3c5/vaibhav:latest
+        docker push -a public.ecr.aws/z2g8g3c5/vaibhav
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+    
+    - name: Deploy image to EKS
+      run: |
+        helm install octo-app octo-app
