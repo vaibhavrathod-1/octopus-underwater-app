@@ -58,4 +58,4 @@ jobs:
       id: deploy-image
       run: |
         aws eks --region us-east-2 update-kubeconfig --name task-cluster
-        helm install octo-app octo-app
+        helm upgrade --recreate-pods -i octo-app octo-app
