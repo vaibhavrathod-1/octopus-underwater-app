@@ -56,4 +56,5 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}      
         aws-region: us-east-2
         run: |
+          aws eks --region us-east-2 update-kubeconfig --name task-cluster
           helm install octo-app octo-app
