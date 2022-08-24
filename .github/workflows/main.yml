@@ -9,7 +9,11 @@ name: AWS WORKFLOW
 jobs:
   create_cluster:
     uses: vaibhavrathod-1/Terraform/.github/workflows/manual.yml@main  
-  deploy:
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    
+  deployment:
     name: Deploy
     needs: create_cluster
     runs-on: ubuntu-latest
@@ -51,7 +55,6 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}      
-        aws-region: us-east-2
     
     - name: Deploy into EKS  
       id: deploy-image
