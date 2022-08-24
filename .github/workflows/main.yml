@@ -7,7 +7,11 @@ on:
 name: AWS WORKFLOW
 
 jobs:
-  
+  create_cluster:
+    uses: vaibhavrathod-1/Terraform/.github/workflows/manual.yml@main  
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     
   deployment:
     name: Deploy
