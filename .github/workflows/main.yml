@@ -11,6 +11,7 @@ jobs:
     uses: vaibhavrathod-1/Terraform/.github/workflows/manual.yml@main  
   deploy:
     name: Deploy
+    needs: create_cluster
     runs-on: ubuntu-latest
 
     steps:    
