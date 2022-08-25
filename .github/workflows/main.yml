@@ -62,3 +62,10 @@ jobs:
       run: |
         aws eks --region us-east-2 update-kubeconfig --name vaibhav
         helm upgrade --recreate-pods -i octo-app octo-app
+  sonarqube:
+    name: sonarqube
+    needs: deployment
+    uses: vaibhavrathod-1/sonarqube-scan/.github/workflows/build.yml@main
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
