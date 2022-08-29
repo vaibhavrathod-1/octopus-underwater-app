@@ -70,7 +70,7 @@ jobs:
       id: deploy-image
       run: |
         aws eks --region us-east-2 update-kubeconfig --name vaibhav
-        helm upgrade -i octo-app octo-app
+        helm upgrade --recreate-pods -i octo-app octo-app
        
   Deployment_In_Prod_Evironment:
     name: Deployment in prod
