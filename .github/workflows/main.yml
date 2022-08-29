@@ -13,9 +13,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     
-  deployment:
-    name: Deploy
-    environment: dev
+  Build_and_Push_Image_to_ECR:
+    name: build and push
     needs: create_cluster
     runs-on: ubuntu-latest
 
@@ -50,7 +49,12 @@ jobs:
         docker push public.ecr.aws/z2g8g3c5/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
     
-       
+  Deployment_In_Dev_Environment:
+    name: Deploying in Dev
+    runs-on: ubuntu-latest
+    environment: dev
+    needs: Build_and_Push_Image_to_ECR
+    steps:
     - name: Login For EKS
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -63,11 +67,34 @@ jobs:
       run: |
         aws eks --region us-east-2 update-kubeconfig --name vaibhav
         helm upgrade --recreate-pods -i octo-app octo-app
-        # IP_SERVICE=$(kubectl get services -o json | jq -r '.items[] | select(.metadata.name == "${{ inputs.app-name }}") | .status.loadBalancer?|.ingress[]?|.ip')
+        IP_SERVICE=$(kubectl get services -o json | jq -r '.items[] | select(.metadata.name == "octo-app") | .status.loadBalancer?|.ingress[]?|.ip')
 
-        # echo "IP_SERVICE=$IP_SERVICE" >> $GITHUB_ENV
+        echo "IP_SERVICE=$IP_SERVICE" >> $GITHUB_ENV
         # echo "🏁 - Service ${{ github.repository }} update in ${{inputs.namespace}} : http://$IP_SERVICE:8080 "
-        # echo "::set-output name=service-url::http://$IP_SERVICE:8080"     
+        echo "::set-output name=service-url::http://$IP_SERVICE:8080"   
+  Deployment_In_Prod_Evironment:
+    name: Deployment in prod
+    runs-on: ubuntu-latest
+    environment: prod
+    needs: Deployment_In_Dev_Environment
+    steps:
+    - name: Login For EKS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}   
+        aws-region: us-east-2
+    
+    - name: Deploy into EKS  
+      id: deploy-image
+      run: |
+        aws eks --region us-east-2 update-kubeconfig --name prod-vaibhav
+        helm upgrade --recreate-pods -i octo-app octo-app
+        IP_SERVICE=$(kubectl get services -o json | jq -r '.items[] | select(.metadata.name == "octo-app") | .status.loadBalancer?|.ingress[]?|.ip')
+
+        echo "IP_SERVICE=$IP_SERVICE" >> $GITHUB_ENV
+        # echo "🏁 - Service ${{ github.repository }} update in ${{inputs.namespace}} : http://$IP_SERVICE:8080 "
+        echo "::set-output name=service-url::http://$IP_SERVICE:8080"
   # sonarqube:
   #   name: sonarqube
   #   needs: deployment
