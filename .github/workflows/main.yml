@@ -62,6 +62,11 @@ jobs:
       run: |
         aws eks --region us-east-2 update-kubeconfig --name vaibhav
         helm upgrade --recreate-pods -i octo-app octo-app
+        # IP_SERVICE=$(kubectl get services -o json | jq -r '.items[] | select(.metadata.name == "${{ inputs.app-name }}") | .status.loadBalancer?|.ingress[]?|.ip')
+
+        echo "IP_SERVICE=$IP_SERVICE" >> $GITHUB_ENV
+        echo "🏁 - Service ${{ github.repository }} update in ${{inputs.namespace}} : http://$IP_SERVICE:8080 "
+        echo "::set-output name=service-url::http://$IP_SERVICE:8080"     
   sonarqube:
     name: sonarqube
     needs: deployment
