@@ -15,6 +15,7 @@ jobs:
     
   deployment:
     name: Deploy
+    environment: dev
     needs: create_cluster
     runs-on: ubuntu-latest
 
