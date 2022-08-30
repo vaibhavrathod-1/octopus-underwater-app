@@ -93,6 +93,8 @@ jobs:
       run: |
         aws eks --region us-east-2 update-kubeconfig --name prod-vaibhav
         helm upgrade --recreate-pods -i octo-app octo-app
+        export SERVICE_IP=$(kubectl get svc --namespace default octo-app --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
+        echo http://$SERVICE_IP:80
        
   # sonarqube:
   #   name: sonarqube
