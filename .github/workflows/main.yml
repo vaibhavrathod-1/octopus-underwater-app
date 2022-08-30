@@ -76,7 +76,7 @@ jobs:
     name: Deployment in prod
     runs-on: ubuntu-latest
     environment: prod
-    needs: Deployment_In_Dev_Environment
+    needs: Build_and_Push_Image_to_ECR
     steps:
     - name: Checkout
       uses: actions/checkout@v2
