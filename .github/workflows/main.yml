@@ -99,10 +99,10 @@ jobs:
     - name: Deploy into EKS  
       id: deploy-image
       env:
-        $cluster_name_prod: timepass
+        cluster_name_prod: timepass
       run: |
         aws eks --region us-east-2 update-kubeconfig --name $cluster_name_prod
-        helm upgrade -i $release_name $helm_dir
+        helm upgrade --recreate-pods -i $release_name $helm_dir
         export SERVICE_IP=$(kubectl get svc --namespace default $release_name --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
         echo http://$SERVICE_IP:80
         
